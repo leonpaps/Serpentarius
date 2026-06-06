@@ -1,43 +1,64 @@
-# BlueBuild Template &nbsp; [![bluebuild build badge](https://github.com/blue-build/template/actions/workflows/build.yml/badge.svg)](https://github.com/blue-build/template/actions/workflows/build.yml)
+![Serpentarius OS Logo](files/system/usr/share/pixmaps/serpentarius-launcher.svg) 
 
-See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.
+# Serpentarius: An Opinionated immutable distro for me, and maybe you. 
 
-After setup, it is recommended you update this README to describe your custom image.
+<h1 align="center">Serpentarius: Declarative, Immutable Platform for Engineering & Gaming</h1>
 
-## Installation
+This distro is not battle tested yet.
+I am gonna daily drive it and see what I learn.
+Check back in 6 months ⏱️
 
-> [!WARNING]  
-> [This is an experimental feature](https://www.fedoraproject.org/wiki/Changes/OstreeNativeContainerStable), try at your own discretion.
+[![Build Status](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/actions/workflows/build.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/actions/workflows/build.yml)
+[![Platform Architecture](https://img.shields.io/badge/Architecture-Cloud--Native%20Desktop-blue)](https://blue-build.org/)
+[![Base OS](https://img.shields.io/badge/Base-Fedora%20Silverblue%2044-red)](https://fedoraproject.org/atomic-desktops/silverblue/)
 
-To rebase an existing atomic Fedora installation to the latest build:
+## 🦅 The Philosophy of the Secretary Bird (*Sagittarius serpentarius*)
 
-- First rebase to the unsigned image, to get the proper signing keys and policies installed:
-  ```
-  rpm-ostree rebase ostree-unverified-registry:ghcr.io/blue-build/template:latest
-  ```
-- Reboot to complete the rebase:
-  ```
-  systemctl reboot
-  ```
-- Then rebase to the signed image, like so:
-  ```
-  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/blue-build/template:latest
-  ```
-- Reboot again to complete the installation
-  ```
-  systemctl reboot
-  ```
+This operating system is proudly named after *Sagittarius serpentarius*—the **Secretary Bird**. Indigenous to the African savannas, the secretary bird is renowned for its striking, elegant appearance paired with its highly lethal, precise hunting style. Unlike most birds of prey that attack from the air, it operates entirely on foot, stomping out threats (like venomous snakes) with absolute force and calculating speed.
 
-The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
+**Serpentarius** mirrors this exact biological paradigm:
+*   **Grounded Stability:** By utilizing an immutable core architecture, the OS maintains a rock-solid, grounded foundation that completely resists the system drift and environmental chaos of traditional mutable desktops.
+*   **Precise Striking Force:** Heavy background daemons, telemetry, and unneeded corporate bloat are aggressively "stomped out" of the system layout layer, leaving a lean, hyper-focused engineering and gaming platform.
 
-## ISO
 
-If build on Fedora Atomic, you can generate an offline ISO with the instructions available [here](https://blue-build.org/how-to/generate-iso/#_top). These ISOs cannot unfortunately be distributed on GitHub for free due to large sizes, so for public projects something else has to be used for hosting.
 
-## Verification
+**Serpentarius** is an opinionated, production-grade, container-native Linux operating system built on the **Fedora Atomic (`bootc`)** ecosystem. This project implements the **Infrastructure as Code (IaC)** paradigm for local developer workstations—shifting system state, package layering, and hardware-specific configurations upstream into an automated CI/CD build pipeline.
 
-These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify the signature by downloading the `cosign.pub` file from this repo and running the following command:
 
-```bash
-cosign verify --key cosign.pub ghcr.io/blue-build/template
-```
+---
+
+# Choices: 
+
+I chose Gnome for the desktop environment because I haven't used it in quite some time but I like the gnome app suite. I might change to something else but let's see how it goes.
+
+I have been using cinamon for a while on my laptop and KDE on my desktop.
+
+I want to see what I can do the tweek tools. Classic PC style bottom bar with an app menu is my favourite layout.
+
+ - I have chosen the opensource codium editor instead of vscode. I don't think telemetry is worth it.
+ - It ships with google chrome, maybe chromium would have been a better choice but let's see.
+ - Homebrew is installed by default. I have been using homebrew on linux for a while and I really like it (even when not on immutable systems).
+   - Good build recipes
+   - No sudo needed
+   - doesn't mess with system dependancie.
+ - ZSH is the default shell with some nice to have extensions to make it feel familiar
+
+---
+
+## 🛠️ Key Architectural Highlights
+
+*   **Infrastructure as Code (IaC):** The entire bare-metal operating system configuration is defined declaratively via `recipe.yml`. Local state drift is eliminated.
+*   **GitOps-Driven CI/CD Pipeline:** Every push to the `main` branch triggers a GitHub Actions pipeline that cross-compiles system layers, injects secure repositories, and publishes a cryptographically signed OCI container image to the GitHub Container Registry (GHCR).
+*   **Atomic Deployments via `bootc`:** System updates utilize image-swapping boot mechanisms with native `composefs` verification. If a deployment fails, the bootloader safely rolls back to the previous cryptographically signed image state.
+*   **Zero-Overhead Local Development:** Decouples heavy system tools from a native Homebrew environment to protect system-sleep states, eliminate container latency, and preserve hardware-acceleration limits.
+
+---
+
+## 💻 Tech Stack & Features
+
+*   **Core System Layer:** Built on Universal Blue’s `silverblue-main` base tracking upstream Fedora Silverblue 44.
+*   **Hardware-Accelerated Multimedia:** Integrated non-free AMD VA-API hardware decoding layers via embedded RPM Fusion dependencies (`mesa-va-drivers-freeworld` and `libavcodec-freeworld`).
+*   **Dual-Container Engine Virtualization:** Pre-configured parallel execution paths using `podman` for system-level task management/Distrobox isolation, and a native bare-metal `docker-ce` daemon for production microservice architectures.
+*   **Sandboxed Evergreen Ecosystem:** User applications (`Google Chrome`, `VSCodium`, `Steam`) are completely containerized via the Flatpak runtime layer, configured with granular permission sliders via `Flatseal`.
+*   **UX Personalization Layer:** Modified GNOME 44 shell leveraging host-layered `Dash to Panel` and `ArcMenu` extensions to deliver a deterministic Windows 7 / KDE Plasma ergonomic layout.
+*   **Shell Environment:** Default system shell hardcoded to `Zsh`, prepared for native user-space performance plugins.
