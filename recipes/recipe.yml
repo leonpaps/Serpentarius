@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: serpentarius
-description: A clean, telemetry-free GNOME desktop tailored to my needs on AMD hardware, featuring the custom Serpentarius paradigm.
+description: A clean, telemetry-free GNOME desktop on AMD hardware, featuring the custom Serpentarius paradigm.
 
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44  # Tracks the stable Fedora release tree
@@ -12,32 +12,39 @@ modules:
       - source: system
         destination: /
 
-  # 2. Base Repositories and Native Driver/Docker Layering
-  - type: rpm-ostree
-    rpmfusion: true # Dynamically provisions correct RPM Fusion keys/mirrors for Fedora 44
-    repos:
-      - https://download.docker.com/linux/fedora/docker-ce.repo
+  # 2. Add Non-Free Repositories & Base Utilities via the Bling Module
+  - type: bling
     install:
-      # Codecs & Full Hardware Acceleration for Ryzen 4650U
-      - mesa-va-drivers-freeworld
-      - libavcodec-freeworld
-      - gstreamer1-plugins-bad-freeworld
-      - gstreamer1-plugins-ugly
-      # Core Developer & Shell Utilities
-      - zsh
-      - distrobox
-      - fastfetch
-      # Native Docker CE Engine Installation
-      - docker-ce
-      - docker-ce-cli
-      - docker-buildx-plugin
-      - docker-compose-plugin
-    remove:
-      # Removing built-in Firefox RPM in favor of clean Flathub ecosystem
-      - firefox
-      - firefox-langpacks
+      - rpmfusion   # Automatically provisions correct RPM Fusion keys/mirrors for F44 safely
 
-  # 3. Custom Automation Scripts (System Environments and Group Permissions)
+  # 3. Modern Package Layering Layout (Using Native DNF5/Bootc Paradigm)
+  - type: dnf
+    repos:
+      files:
+        - https://download.docker.com/linux/fedora/docker-ce.repo
+    install:
+      packages:
+        # Codecs & Full Hardware Acceleration for Ryzen 4650U
+        - mesa-va-drivers-freeworld
+        - libavcodec-freeworld
+        - gstreamer1-plugins-bad-freeworld
+        - gstreamer1-plugins-ugly
+        # Core Developer & Shell Utilities
+        - zsh
+        - distrobox
+        - fastfetch
+        # Native Docker CE Engine Installation
+        - docker-ce
+        - docker-ce-cli
+        - docker-buildx-plugin
+        - docker-compose-plugin
+    remove:
+      packages:
+        # Removing built-in Firefox RPM in favor of clean Flathub ecosystem
+        - firefox
+        - firefox-langpacks
+
+  # 4. Custom Automation Scripts (System Environments and Group Permissions)
   - type: script
     snippets:
       # Enforce Zsh as the default system-wide user shell layout
@@ -48,19 +55,19 @@ modules:
       # Compiles your custom wallpaper and layout schema overrides into the binary glib database
       - glib-compile-schemas /usr/share/glib-2.0/schemas/
 
-  # 4. Native Manual Homebrew Integration (Telemetry Disabled)
+  # 5. Native Manual Homebrew Integration (Telemetry Disabled)
   - type: brew
     brew-analytics: false
     auto-update: false
     auto-upgrade: false
 
-  # 5. GNOME Extensions (Traditional Start Menu Layout Layering)
+  # 6. GNOME Extensions (Traditional Start Menu Layout Layering)
   - type: gnome-extensions
     install:
       - dash-to-panel@jderose9.github.com
       - arcmenu@arcmenu.com
 
-  # 6. Evergreen Applications & Browsers (Flatpak Sanboxes)
+  # 7. Evergreen Applications & Browsers (Flatpak Sandboxes)
   - type: default-flatpaks
     configurations:
       - notify: true
@@ -72,5 +79,5 @@ modules:
           - com.github.tchx84.Flatseal       # Sandbox permissions manager
           - com.valvesoftware.Steam           # Sandboxed Steam container for gaming
 
-  # 7. Cryptographic Security Signing (Maintains Sigstore validation alignment)
+  # 8. Cryptographic Security Signing (Maintains Sigstore validation alignment)
   - type: signing
