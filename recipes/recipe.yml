@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: serpentarius
-description: A clean, telemetry-free GNOME desktop tailored for my needs on AMD hardware, featuring the custom Serpentarius paradigm.
+description: A clean, telemetry-free GNOME desktop tailored to my needs on AMD hardware, featuring the custom Serpentarius paradigm.
 
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44  # Tracks the stable Fedora release tree
