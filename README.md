@@ -2,8 +2,6 @@
 
 # Serpentarius: An Opinionated immutable distro for me, and maybe you. 
 
-<h1 align="center">Serpentarius: Declarative, Immutable Platform for Engineering & Gaming</h1>
-
 This distro is not battle tested yet.
 I am gonna daily drive it and see what I learn.
 Check back in 6 months ⏱️
