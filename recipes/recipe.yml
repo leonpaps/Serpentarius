@@ -1,45 +1,81 @@
----
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
-name: template
-# description will be included in the image's metadata
-description: This is my personal OS image.
+name: leon-atomic-gnome
+description: A clean, telemetry-free GNOME desktop tailored for development and gaming on AMD hardware.
 
-# the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+image-version: 44  # Tracks the stable Fedora release tree
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
 
-  - type: dnf
+  # 1. Base Repositories and Native Driver/Docker Layering
+  - type: rpm-ostree
     repos:
-      copr:
-        - atim/starship
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-44.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-44.noarch.rpm
+      - https://download.docker.com/linux/fedora/docker-ce.repo
     install:
-      packages:
-        - micro
-        - starship
+      # Codecs & Full Hardware Acceleration for Ryzen 4650U
+      - mesa-va-drivers-freeworld
+      - libavcodec-freeworld
+      - gstreamer1-plugins-bad-freeworld
+      - gstreamer1-plugins-ugly
+      # Core Developer & Shell Utilities
+      - zsh
+      - distrobox
+      # Native Docker CE Installation
+      - docker-ce
+      - docker-ce-cli
+      - docker-buildx-plugin
+      - docker-compose-plugin
     remove:
-      packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+      # Removing built-in Firefox RPM in favor of clean Flathub ecosystem
+      - firefox
+      - firefox-langpacks
 
+  # 2. Custom Scripts (Default User Configuration Adjustments)
+  - type: script
+    snippets:
+      - sed -i 's/SHELL=\/bin\/bash/SHELL=\/bin\/zsh/g' /etc/default/useradd
+      - groupadd -f docker
+      - systemctl enable docker.service
+
+  # 3. Native Manual Homebrew Integration (Telemetry Disabled)
+  - type: brew
+    brew-analytics: false
+    auto-update: false
+    auto-upgrade: false
+
+  # 4. GNOME Extensions (Traditional Start Menu Layout)
+  - type: gnome-extensions
+    install:
+      - dash-to-panel@jderose9.github.com
+      - arcmenu@arcmenu.com
+
+  # 5. Evergreen Applications & Browsers (Flatpak)
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
+      - notify: true
         scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+        install:
+          - com.google.Chrome                 # Evergreen browser
+          - com.vscodium.codium               # Telemetry-free IDE
+          - com.mattjakeman.ExtensionManager  # Extension panel tweak manager
+          - com.github.tchx84.Flatseal       # Sandbox permissions manager
+          - com.valvesoftware.Steam           # Sandboxed Steam container for gaming
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  # 6. Cryptographic Security Signing (Keep this at the bottom)
+  - type: signing
+
+  # Wallpaper
+  # Custom Scripts (Default User Configuration Adjustments)
+  - type: script
+    snippets:
+      - sed -i 's/SHELL=\/bin\/bash/SHELL=\/bin\/zsh/g' /etc/default/useradd
+      - groupadd -f docker
+      - systemctl enable docker.service
+      # Compiles your new wallpaper schema override directly into the image layer
+      - glib-compile-schemas /usr/share/glib-2.0/schemas/
