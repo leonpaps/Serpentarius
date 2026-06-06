@@ -1,21 +1,21 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: leon-atomic-gnome
-description: A clean, telemetry-free GNOME desktop tailored for development and gaming on AMD hardware.
+name: serpentarius
+description: A clean, telemetry-free GNOME desktop tailored for my needs on AMD hardware, featuring the custom Serpentarius paradigm.
 
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44  # Tracks the stable Fedora release tree
 
 modules:
+  # 1. Host-Level Filesystem Provisioning (Wallpaper, Launcher SVGs, and Terminal Configs)
   - type: files
     files:
       - source: system
         destination: /
 
-  # 1. Base Repositories and Native Driver/Docker Layering
+  # 2. Base Repositories and Native Driver/Docker Layering
   - type: rpm-ostree
+    rpmfusion: true # Dynamically provisions correct RPM Fusion keys/mirrors for Fedora 44
     repos:
-      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-44.noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-44.noarch.rpm
       - https://download.docker.com/linux/fedora/docker-ce.repo
     install:
       # Codecs & Full Hardware Acceleration for Ryzen 4650U
@@ -26,7 +26,8 @@ modules:
       # Core Developer & Shell Utilities
       - zsh
       - distrobox
-      # Native Docker CE Installation
+      - fastfetch
+      # Native Docker CE Engine Installation
       - docker-ce
       - docker-ce-cli
       - docker-buildx-plugin
@@ -36,26 +37,30 @@ modules:
       - firefox
       - firefox-langpacks
 
-  # 2. Custom Scripts (Default User Configuration Adjustments)
+  # 3. Custom Automation Scripts (System Environments and Group Permissions)
   - type: script
     snippets:
+      # Enforce Zsh as the default system-wide user shell layout
       - sed -i 's/SHELL=\/bin\/bash/SHELL=\/bin\/zsh/g' /etc/default/useradd
+      # Create native docker socket group permissions and hook up background systemd daemon
       - groupadd -f docker
       - systemctl enable docker.service
+      # Compiles your custom wallpaper and layout schema overrides into the binary glib database
+      - glib-compile-schemas /usr/share/glib-2.0/schemas/
 
-  # 3. Native Manual Homebrew Integration (Telemetry Disabled)
+  # 4. Native Manual Homebrew Integration (Telemetry Disabled)
   - type: brew
     brew-analytics: false
     auto-update: false
     auto-upgrade: false
 
-  # 4. GNOME Extensions (Traditional Start Menu Layout)
+  # 5. GNOME Extensions (Traditional Start Menu Layout Layering)
   - type: gnome-extensions
     install:
       - dash-to-panel@jderose9.github.com
       - arcmenu@arcmenu.com
 
-  # 5. Evergreen Applications & Browsers (Flatpak)
+  # 6. Evergreen Applications & Browsers (Flatpak Sanboxes)
   - type: default-flatpaks
     configurations:
       - notify: true
@@ -67,15 +72,5 @@ modules:
           - com.github.tchx84.Flatseal       # Sandbox permissions manager
           - com.valvesoftware.Steam           # Sandboxed Steam container for gaming
 
-  # 6. Cryptographic Security Signing (Keep this at the bottom)
+  # 7. Cryptographic Security Signing (Maintains Sigstore validation alignment)
   - type: signing
-
-  # Wallpaper
-  # Custom Scripts (Default User Configuration Adjustments)
-  - type: script
-    snippets:
-      - sed -i 's/SHELL=\/bin\/bash/SHELL=\/bin\/zsh/g' /etc/default/useradd
-      - groupadd -f docker
-      - systemctl enable docker.service
-      # Compiles your new wallpaper schema override directly into the image layer
-      - glib-compile-schemas /usr/share/glib-2.0/schemas/
