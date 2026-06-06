@@ -2,8 +2,6 @@
 
 # Serpentarius: An Opinionated immutable distro for me, and maybe you. 
 
-<h1 align="center">Serpentarius: Declarative, Immutable Platform for Engineering & Gaming</h1>
-
 This distro is not battle tested yet.
 I am gonna daily drive it and see what I learn.
 Check back in 6 months ⏱️
@@ -33,7 +31,7 @@ I chose Gnome for the desktop environment because I haven't used it in quite som
 
 I have been using cinamon for a while on my laptop and KDE on my desktop.
 
-I want to see what I can do the tweek tools. Classic PC style bottom bar with an app menu is my favourite layout.
+I want to see what I can do with the tweek tools. Classic PC style bottom bar with an app menu is my favourite layout.
 
  - I have chosen the opensource codium editor instead of vscode. I don't think telemetry is worth it.
  - It ships with google chrome, maybe chromium would have been a better choice but let's see.
