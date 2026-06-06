@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: serpentarius
-description: A clean, telemetry-free GNOME desktop tailored for development and gaming on AMD hardware, featuring the custom Serpentarius paradigm.
+description: A clean, telemetry-free GNOME, featuring the custom Serpentarius paradigm.
 
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44  # Tracks the stable Fedora release tree
@@ -32,6 +32,9 @@ modules:
         - zsh
         - distrobox
         - fastfetch
+        # Native Desktop Extensions Layered Directly From System Repositories
+        - gnome-shell-extension-dash-to-panel
+        - gnome-shell-extension-arcmenu
         # Native Docker CE Engine Installation
         - docker-ce
         - docker-ce-cli
@@ -60,13 +63,7 @@ modules:
     auto-update: false
     auto-upgrade: false
 
-  # 6. GNOME Extensions (Traditional Start Menu Layout Layering)
-  - type: gnome-extensions
-    install:
-      - dash-to-panel@jderose9.github.com
-      - arcmenu@arcmenu.com
-
-  # 7. Evergreen Applications & Browsers (Flatpak Sandboxes)
+  # 6. Evergreen Applications & Browsers (Flatpak Sandboxes)
   - type: default-flatpaks
     configurations:
       - notify: true
@@ -78,5 +75,5 @@ modules:
           - com.github.tchx84.Flatseal       # Sandbox permissions manager
           - com.valvesoftware.Steam           # Sandboxed Steam container for gaming
 
-  # 8. Cryptographic Security Signing (Maintains Sigstore validation alignment)
+  # 7. Cryptographic Security Signing (Maintains Sigstore validation alignment)
   - type: signing
