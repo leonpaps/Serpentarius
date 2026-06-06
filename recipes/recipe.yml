@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: serpentarius
-description: A clean, telemetry-free GNOME desktop on AMD hardware, featuring the custom Serpentarius paradigm.
+description: A clean, telemetry-free GNOME desktop tailored for development and gaming on AMD hardware, featuring the custom Serpentarius paradigm.
 
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44  # Tracks the stable Fedora release tree
@@ -24,9 +24,8 @@ modules:
         - https://download.docker.com/linux/fedora/docker-ce.repo
     install:
       packages:
-        # Codecs & Full Hardware Acceleration for Ryzen 4650U
+        # Codecs & Full Hardware Acceleration (Adjusted to avoid the locked F44 library collision)
         - mesa-va-drivers-freeworld
-        - libavcodec-freeworld
         - gstreamer1-plugins-bad-freeworld
         - gstreamer1-plugins-ugly
         # Core Developer & Shell Utilities
