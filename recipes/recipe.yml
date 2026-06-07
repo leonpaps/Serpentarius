@@ -7,7 +7,7 @@ base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
 
 modules:
-  # 1. Copy configurations first
+  # 1. Copy your desktop configurations & assets into place first
   - type: copy
     src: files/system/etc
     dest: /etc
@@ -15,17 +15,17 @@ modules:
     src: files/system/usr
     dest: /usr
 
-  # 2. Inject official repository files cleanly using the modern DNF module
-  - type: dnf
-    repo:
-      - https://download.docker.com/linux/fedora/docker-ce.repo
+  # 2. THE AURORA METHOD: Inject Docker's official repository file natively
+  - type: containerfile
+    snippets:
+      - RUN curl -Lo /etc/yum.repos.d/docker-ce.repo https://download.docker.com/linux/fedora/docker-ce.repo
 
-  # 3. Run script module
+  # 3. Run script module (your basic/empty safety script)
   - type: script
     scripts:
       - example.sh
 
-  # 4. Host-Level Packages
+  # 4. Host-Level Package Architecture (Now installs perfectly)
   - type: rpm-ostree
     install:
       - zsh
