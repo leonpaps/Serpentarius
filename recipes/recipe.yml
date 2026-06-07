@@ -7,12 +7,20 @@ base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
 
 modules:
-  # 1. Run system configuration automation
+  # 1. Copy your modified /etc/default/useradd and asset files into the image first
+  - type: copy
+    files:
+      - from: system/etc
+        to: /etc
+      - from: system/usr
+        to: /usr
+
+  # 2. Run system configuration automation (if you kept your empty/basic example.sh)
   - type: script
     scripts:
       - example.sh
 
-  # 2. Host-Level Package Architecture (Baked In)
+  # 3. Host-Level Package Architecture (Baked In)
   - type: rpm-ostree
     install:
       - google-chrome-stable
