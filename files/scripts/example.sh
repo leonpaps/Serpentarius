@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-
-# Tell this script to exit if there are any errors.
-# You should have this in every custom script, to ensure that your completed
-# builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
+# 1. Enforce Zsh as the default system-wide user shell layout
+sed -i 's|SHELL=/bin/bash|SHELL=/bin/zsh|g' /etc/default/useradd

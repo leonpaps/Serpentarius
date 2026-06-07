@@ -3,54 +3,29 @@
 name: serpentarius
 description: An opinionated, clean, and highly secure immutable KDE Plasma distribution built on Universal Blue Kinoite.
 
-# Track the pristine upstream Universal Blue KDE image
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
 
-# All system components must live within the modules block
 modules:
-  # 1. Post-Installation System Initialization & Package Repositories
+  # 1. Run system configuration automation
   - type: script
     scripts:
-      - |
-        #!/usr/bin/env bash
-        set -oue pipefail
-        
-        # Inject the official cryptographically signed Google Chrome repo safely
-        cat << 'EOF' > /etc/yum.repos.d/google-chrome.repo
-        [google-chrome]
-        name=google-chrome
-        baseurl=http://google.com
-        enabled=1
-        gpgcheck=1
-        gpgkey=https://google.com
-        EOF
-
-        # Inject the official Docker repository for secure engine updates
-        curl -Lo /etc/yum.repos.d/docker-ce.repo https://docker.com
+      - example.sh
 
   # 2. Host-Level Package Architecture (Baked In)
   - type: rpm-ostree
     install:
-      - google-chrome-stable # Secure web anchor baked onto host layer
-      - zsh                  # Global shell environment
-      - fastfetch            # Modern desktop info layout
-      - virt-manager         # Virtual Machine engine launcher
-      - libvirt-daemon-kvm   # Kernel Virtual Machine supervisor
-      - qemu-kvm             # Hardware emulator layers
-      - docker-ce            # Container development engine
-      - docker-compose-plugin # Multi-container developer utility
+      - google-chrome-stable
+      - zsh
+      - fastfetch
+      - virt-manager
+      - libvirt-daemon-kvm
+      - qemu-kvm
+      - docker-ce
+      - docker-compose-plugin
 
-  # 3. Final Service Customisation Layer
-  - type: script
-    scripts:
-      - |
-        #!/usr/bin/env bash
-        set -oue pipefail
-        
-        # Enforce Zsh as the default system-wide user shell layout
-        sed -i 's|SHELL=/bin/bash|SHELL=/bin/zsh|g' /etc/default/useradd
-        
-        # Securely activate low-level daemon operations
-        systemctl enable libvirtd.service
-        systemctl enable docker.socket
+  # 3. Native User-Space Homebrew Engine Tweak
+  # Automates setup and triggers background upgrade timers safely
+  - type: brew
+    install:
+      - magic-wormhole # Automatically baked into the post-install task sheet

@@ -60,6 +60,20 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/leonpaps/serpentarius:lates
 ```
 
 If you don't have a current image, that's fine. Download the kinonite fedora atomic image and do the rebase after installation.
-
 I think custom installation media is coming soon (people smarter than me are working on it)
 
+## 🛠️ Post-Installation Activation (Off for now by default but installed)
+
+To keep the system boot lifecycle lightweight and minimal, background service daemons are disabled by default. If you plan to use container virtualization or VMs, run the following commands once to enable them permanently across all further boots:
+
+Remember we have podman and docker so do what you will.
+
+### Enable Docker Engine
+```bash
+sudo systemctl enable --now docker.socket
+```
+
+### Enable Virtualization (Virt-Manager)
+```bash
+sudo systemctl enable --now libvirtd.service
+```
