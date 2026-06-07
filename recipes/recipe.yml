@@ -9,11 +9,28 @@ image-version: latest
 
 # All system components must live within the modules block
 modules:
-  # 1. Host-Level Package Architecture and Custom Repository Integration
+  # 1. Post-Installation System Initialization & Package Repositories
+  - type: script
+    scripts:
+      - |
+        #!/usr/bin/env bash
+        set -oue pipefail
+        
+        # Inject the official cryptographically signed Google Chrome repo safely
+        cat << 'EOF' > /etc/yum.repos.d/google-chrome.repo
+        [google-chrome]
+        name=google-chrome
+        baseurl=http://google.com
+        enabled=1
+        gpgcheck=1
+        gpgkey=https://google.com
+        EOF
+
+        # Inject the official Docker repository for secure engine updates
+        curl -Lo /etc/yum.repos.d/docker-ce.repo https://docker.com
+
+  # 2. Host-Level Package Architecture (Baked In)
   - type: rpm-ostree
-    repos:
-      # Explicitly pass the full remote .repo definition path to the engine
-      - https://fedorainfracloud.org
     install:
       - google-chrome-stable # Secure web anchor baked onto host layer
       - zsh                  # Global shell environment
@@ -24,7 +41,7 @@ modules:
       - docker-ce            # Container development engine
       - docker-compose-plugin # Multi-container developer utility
 
-  # 2. Post-Installation System Initialization 
+  # 3. Final Service Customisation Layer
   - type: script
     scripts:
       - |
