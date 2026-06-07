@@ -1,0 +1,16 @@
+[kwin]
+# Maps Super+Up to top-tile on first press, and full maximize on second press
+Window Quick Tile Top=Meta+Up,none,Quick Tile Window to the Top
+Maximize=Meta+Up\tMeta+PgUp,none,Maximize Window
+
+# Maps Super+Down to bottom-tile on first press, and minimize/restore on second press
+Window Quick Tile Bottom=Meta+Down,none,Quick Tile Window to the Bottom
+Minimize=Meta+Down\tMeta+PgDn,none,Minimize Window
+
+# Configures symmetric horizontal arrow tiling layouts
+Window Quick Tile Left=Meta+Left,none,Quick Tile Window to the Left
+Window Quick Tile Right=Meta+Right,none,Quick Tile Window to the Right
+
+# Retains core shortcut mechanics for virtual workspace navigation
+Switch to Next Desktop=Meta+Ctrl+Right,none,Switch to Next Desktop
+Switch to Previous Desktop=Meta+Ctrl+Left,none,Switch to Previous Desktop

@@ -1,80 +1,56 @@
-# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# ---
+# Serpentarius: Custom Linux Distro Blueprint
+# ---
 name: serpentarius
-description: A clean, telemetry-free GNOME, featuring the custom Serpentarius paradigm.
-# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+description: An opinionated, clean, and highly secure immutable KDE Plasma distribution built on Universal Blue Kinoite.
 
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 44  # Tracks the stable Fedora release tree
+# Track the pristine upstream Universal Blue KDE image
+base-image: ghcr.io/ublue-os/kinoite-main
+image-version: latest
 
-modules:
-  # 1. Host-Level Filesystem Provisioning (Wallpaper, Launcher SVGs, and Terminal Configs)
-  - type: files
-    files:
-      - source: system
-        destination: /
+# 1. Core Operating System Repositories
+# Pulls down cryptographically signed, official vendor keys
+repositories:
+  - google-chrome:
+      name: google-chrome
+      baseurl: http://google.com
+      enabled: 1
+      gpgcheck: 1
+      gpgkey: https://google.com
 
-  # 2. Add Non-Free Repositories & Base Utilities via the Bling Module
-  - type: bling
-    install:
-      - rpmfusion   # Automatically provisions correct RPM Fusion keys/mirrors for F44 safely
+# 2. Host-Level Package Architecture (Baked In)
+# Universal Blue automatically handles full FFmpeg/Mesa hardware acceleration from RPM Fusion.
+packages:
+  - google-chrome-stable # Secure web anchor baked onto host layer
+  - zsh                  # Global shell environment
+  - fastfetch            # Modern desktop info layout
+  - virt-manager         # Virtual Machine engine launcher
+  - libvirt-daemon-kvm   # Kernel Virtual Machine supervisor
+  - qemu-kvm             # Hardware emulator layers
+  - docker-ce            # Container development engine
+  - docker-compose-plugin # Multi-container developer utility
 
-  # 3. Modern Package Layering Layout (Using Native DNF5/Bootc Paradigm)
-  - type: dnf
-    repos:
-      files:
-        - https://download.docker.com/linux/fedora/docker-ce.repo
-    install:
-      packages:
-        # Codecs & Full Hardware Acceleration (Adjusted to avoid the locked F44 library collision)
-        - mesa-va-drivers-freeworld
-        - gstreamer1-plugins-bad-freeworld
-        - gstreamer1-plugins-ugly
-        # Core Developer & Shell Utilities
-        - zsh
-        - fastfetch
-        # Native Docker CE Engine Installation
-        - docker-ce
-        - docker-ce-cli
-        - docker-buildx-plugin
-        - docker-compose-plugin
-    remove:
-      packages:
-        # Removing built-in Firefox RPM in favor of clean Flathub ecosystem
-        - firefox
-        - firefox-langpacks
+# 3. Post-Installation System Initialization 
+# This module configures hardware daemons and locks system shell properties.
+scripts:
+  post:
+    - |
+      #!/usr/bin/env bash
+      set -oue pipefail
+      
+      # Enforce Zsh as the default system-wide user shell shell layout
+      sed -i 's|SHELL=/bin/bash|SHELL=/bin/zsh|g' /etc/default/useradd
+      
+      # Securely activate low-level daemon operations
+      systemctl enable libvirtd.service
+      systemctl enable docker.socket
+      
+      # Clean package managers layer cache structures to keep image lean
+      rpm-ostree cleanup -a
 
-  # 4. Custom Automation Scripts (System Environments and Group Permissions)
-  - type: script
-    snippets:
-      # Enforce Zsh as the default system-wide user shell layout
-      - sed -i 's/SHELL=\/bin\/bash/SHELL=\/bin\/zsh/g' /etc/default/useradd
-      # Create native docker socket group permissions and hook up background systemd daemon
-      - groupadd -f docker
-      - systemctl enable docker.service
-      # Manually pull, unpack, and force-inject target desktop shell extensions into system folders
-      - mkdir -p /usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com /usr/share/gnome-shell/extensions/arcmenu@arcmenu.com
-      - curl -L https://github.com/home-sweet-gnome/dash-to-panel/archive/master.tar.gz | tar -xz -C /usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com --strip-components=1
-      - curl -L https://gitlab.com/ArcMenu/ArcMenu/-/archive/master/ArcMenu-master.tar.gz | tar -xz -C /usr/share/gnome-shell/extensions/arcmenu@arcmenu.com --strip-components=1
-      # Compiles your custom wallpaper and layout schema overrides into the binary glib database
-      - glib-compile-schemas /usr/share/glib-2.0/schemas/
-
-  # 5. Native Manual Homebrew Integration (Telemetry Disabled)
-  - type: brew
-    brew-analytics: false
-    auto-update: false
-    auto-upgrade: false
-
-  # 6. Evergreen Applications & Browsers (Flatpak Sandboxes)
-  - type: default-flatpaks
-    configurations:
-      - notify: true
-        scope: system
-        install:
-          - com.google.Chrome                 # Evergreen browser
-          - com.vscodium.codium               # Telemetry-free IDE
-          - com.mattjakeman.ExtensionManager  # Extension panel tweak manager
-          - com.github.tchx84.Flatseal       # Sandbox permissions manager
-          - com.valvesoftware.Steam           # Sandboxed Steam container for gaming
-
-  # 7. Cryptographic Security Signing (Maintains Sigstore validation alignment)
-  - type: signing
+# 4. Built-in First Boot Config Integration
+# Instructs the build pipeline to map the /files directory straight into /
+# This injects your kdeglobals, kwinrc, and custom wallpapers automatically.
+config:
+  dirs:
+    - /etc/skel/.config

@@ -1,0 +1,15 @@
+[Plugins]
+# Activates the underlying graphics composite blur framework
+blurEnabled=true
+# Introduces a clean translucent fade layer when dragging windows around
+translucencyEnabled=true
+# Speeds up UI layout transformation speeds to make the desktop feel highly responsive
+animationSpeed=0
+
+[Effect-blur]
+# Bumps up the background blur thickness for a modern glass style
+BlurRadius=12
+
+[org.kde.kdecoration3]
+# Eliminates standard thick window borders for an edge-to-edge layout
+NoBorders=true

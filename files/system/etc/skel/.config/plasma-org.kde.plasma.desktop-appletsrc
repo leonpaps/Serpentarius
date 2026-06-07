@@ -1,0 +1,8 @@
+[Containments][1]
+# Binds the native wallpaper plugin to the primary desktop space
+plugin=org.kde.image
+wallpaperplugin=org.kde.image
+
+[Containments][1][Wallpaper][org.kde.image][General]
+# Instructs the desktop layout to pull your custom asset pack
+Image=Serpentarius
