@@ -15,23 +15,19 @@ modules:
     src: files/system/usr
     dest: /usr
 
-  # 2. Enable the official Google Chrome & Docker CE repositories
-  - type: yum-repo
-    filename: google-chrome.repo
-    enabled: true
-  - type: yum-repo
-    filename: docker-ce.repo
-    enabled: true
+  # 2. Inject official repository files cleanly using the modern DNF module
+  - type: dnf
+    repo:
+      - https://download.docker.com/linux/fedora/docker-ce.repo
 
   # 3. Run script module
   - type: script
     scripts:
       - example.sh
 
-  # 4. Now the packages will resolve perfectly!
+  # 4. Host-Level Packages
   - type: rpm-ostree
     install:
-      - google-chrome-stable
       - zsh
       - fastfetch
       - virt-manager
