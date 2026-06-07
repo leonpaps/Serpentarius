@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# yaml-language-server: $schema=https://blue-build.org
 ---
 name: serpentarius
 description: An opinionated, clean, and highly secure immutable KDE Plasma distribution built on Universal Blue Kinoite.
@@ -12,7 +12,8 @@ modules:
   # 1. Host-Level Package Architecture and Custom Repository Integration
   - type: rpm-ostree
     repos:
-      - https://google.com
+      # Explicitly pass the full remote .repo definition path to the engine
+      - https://fedorainfracloud.org
     install:
       - google-chrome-stable # Secure web anchor baked onto host layer
       - zsh                  # Global shell environment
