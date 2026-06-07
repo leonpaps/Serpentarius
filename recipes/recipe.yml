@@ -27,5 +27,5 @@ modules:
   # 3. Native User-Space Homebrew Engine Tweak
   # Automates setup and triggers background upgrade timers safely
   - type: brew
-    install:
+    packages:
       - magic-wormhole # Automatically baked into the post-install task sheet
