@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://blue-build.org
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 ---
 name: serpentarius
 description: An opinionated, clean, and highly secure immutable KDE Plasma distribution built on Universal Blue Kinoite.
@@ -23,9 +23,3 @@ modules:
       - qemu-kvm
       - docker-ce
       - docker-compose-plugin
-
-  # 3. Native User-Space Homebrew Engine Tweak
-  # Automates setup and triggers background upgrade timers safely
-  - type: brew
-    packages:
-      - magic-wormhole # Automatically baked into the post-install task sheet
