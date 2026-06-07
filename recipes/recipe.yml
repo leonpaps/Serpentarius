@@ -5,16 +5,15 @@ description: An opinionated, clean, and highly secure immutable KDE Plasma distr
 
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
-
 modules:
   # 1. Copy your modified /etc directory configs natively
   - type: copy
-    src: system/etc
+    src: files/system/etc
     dest: /etc
 
   # 2. Copy your branding assets, wallpapers, and presets cleanly
   - type: copy
-    src: system/usr
+    src: files/system/usr
     dest: /usr
 
   # 3. Run system configuration automation (your updated example.sh)
