@@ -9,18 +9,10 @@ image-version: latest
 
 # All system components must live within the modules block
 modules:
-  # 1. Inject the official Google Chrome repository configuration
-  - type: yafti
-    repositories:
-      google-chrome:
-        name: google-chrome
-        baseurl: http://google.com
-        enabled: 1
-        gpgcheck: 1
-        gpgkey: https://google.com
-
-  # 2. Host-Level Package Architecture (Baked In)
+  # 1. Host-Level Package Architecture and Custom Repository Integration
   - type: rpm-ostree
+    repos:
+      - https://google.com
     install:
       - google-chrome-stable # Secure web anchor baked onto host layer
       - zsh                  # Global shell environment
@@ -31,7 +23,7 @@ modules:
       - docker-ce            # Container development engine
       - docker-compose-plugin # Multi-container developer utility
 
-  # 3. Post-Installation System Initialization 
+  # 2. Post-Installation System Initialization 
   - type: script
     scripts:
       - |
