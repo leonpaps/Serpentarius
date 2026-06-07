@@ -5,23 +5,30 @@ description: An opinionated, clean, and highly secure immutable KDE Plasma distr
 
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
+
 modules:
-  # 1. Copy your modified /etc directory configs natively
+  # 1. Copy configurations first
   - type: copy
     src: files/system/etc
     dest: /etc
-
-  # 2. Copy your branding assets, wallpapers, and presets cleanly
   - type: copy
     src: files/system/usr
     dest: /usr
 
-  # 3. Run system configuration automation (your updated example.sh)
+  # 2. Enable the official Google Chrome & Docker CE repositories
+  - type: yum-repo
+    filename: google-chrome.repo
+    enabled: true
+  - type: yum-repo
+    filename: docker-ce.repo
+    enabled: true
+
+  # 3. Run script module
   - type: script
     scripts:
       - example.sh
 
-  # 4. Host-Level Package Architecture (Baked In)
+  # 4. Now the packages will resolve perfectly!
   - type: rpm-ostree
     install:
       - google-chrome-stable
