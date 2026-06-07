@@ -1,6 +1,5 @@
-# ---
-# Serpentarius: Custom Linux Distro Blueprint
-# ---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+---
 name: serpentarius
 description: An opinionated, clean, and highly secure immutable KDE Plasma distribution built on Universal Blue Kinoite.
 
@@ -8,49 +7,40 @@ description: An opinionated, clean, and highly secure immutable KDE Plasma distr
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
 
-# 1. Core Operating System Repositories
-# Pulls down cryptographically signed, official vendor keys
-repositories:
-  - google-chrome:
-      name: google-chrome
-      baseurl: http://google.com
-      enabled: 1
-      gpgcheck: 1
-      gpgkey: https://google.com
+# All system components must live within the modules block
+modules:
+  # 1. Inject the official Google Chrome repository configuration
+  - type: yafti
+    repositories:
+      google-chrome:
+        name: google-chrome
+        baseurl: http://google.com
+        enabled: 1
+        gpgcheck: 1
+        gpgkey: https://google.com
 
-# 2. Host-Level Package Architecture (Baked In)
-# Universal Blue automatically handles full FFmpeg/Mesa hardware acceleration from RPM Fusion.
-packages:
-  - google-chrome-stable # Secure web anchor baked onto host layer
-  - zsh                  # Global shell environment
-  - fastfetch            # Modern desktop info layout
-  - virt-manager         # Virtual Machine engine launcher
-  - libvirt-daemon-kvm   # Kernel Virtual Machine supervisor
-  - qemu-kvm             # Hardware emulator layers
-  - docker-ce            # Container development engine
-  - docker-compose-plugin # Multi-container developer utility
+  # 2. Host-Level Package Architecture (Baked In)
+  - type: rpm-ostree
+    install:
+      - google-chrome-stable # Secure web anchor baked onto host layer
+      - zsh                  # Global shell environment
+      - fastfetch            # Modern desktop info layout
+      - virt-manager         # Virtual Machine engine launcher
+      - libvirt-daemon-kvm   # Kernel Virtual Machine supervisor
+      - qemu-kvm             # Hardware emulator layers
+      - docker-ce            # Container development engine
+      - docker-compose-plugin # Multi-container developer utility
 
-# 3. Post-Installation System Initialization 
-# This module configures hardware daemons and locks system shell properties.
-scripts:
-  post:
-    - |
-      #!/usr/bin/env bash
-      set -oue pipefail
-      
-      # Enforce Zsh as the default system-wide user shell shell layout
-      sed -i 's|SHELL=/bin/bash|SHELL=/bin/zsh|g' /etc/default/useradd
-      
-      # Securely activate low-level daemon operations
-      systemctl enable libvirtd.service
-      systemctl enable docker.socket
-      
-      # Clean package managers layer cache structures to keep image lean
-      rpm-ostree cleanup -a
-
-# 4. Built-in First Boot Config Integration
-# Instructs the build pipeline to map the /files directory straight into /
-# This injects your kdeglobals, kwinrc, and custom wallpapers automatically.
-config:
-  dirs:
-    - /etc/skel/.config
+  # 3. Post-Installation System Initialization 
+  - type: script
+    scripts:
+      - |
+        #!/usr/bin/env bash
+        set -oue pipefail
+        
+        # Enforce Zsh as the default system-wide user shell layout
+        sed -i 's|SHELL=/bin/bash|SHELL=/bin/zsh|g' /etc/default/useradd
+        
+        # Securely activate low-level daemon operations
+        systemctl enable libvirtd.service
+        systemctl enable docker.socket
