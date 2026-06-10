@@ -1,0 +1,46 @@
+name: Build Serpentarius ISO
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allows you to manually trigger the build from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    # Crucial: Run inside an Arch container with host privileges for mounting loop filesystems
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Initialize Pacman keyring & Update system
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm
+
+      - name: Install Build Dependencies
+        run: |
+          pacman -S --noconfirm archiso git
+
+      - name: Build Custom ISO
+        run: |
+          mkdir -p build_work out
+          # Adjust the path below if your profile configurations are in a subfolder (e.g., ./profile)
+          # -v (verbose), -w (working directory), -o (output directory)
+          mkarchiso -v -w build_work -o out .
+
+      - name: Upload Finished ISO Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Serpentarius-ISO
+          path: out/*.iso
+          if-no-files-found: error
+          retention-days: 5
