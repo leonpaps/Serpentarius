@@ -15,11 +15,6 @@ modules:
     src: files/system/usr
     dest: /usr
 
-  # 2. Fix permissions on system skeleton configurations
-  - type: containerfile
-    snippets:
-      - RUN chmod -R 755 /etc/skel && chown -R root:root /etc/skel
-
   # 2. THE AURORA METHOD: Inject Docker's official repository file natively
   - type: containerfile
     snippets:
@@ -39,3 +34,4 @@ modules:
       - libvirt-daemon-kvm
       - qemu-kvm
       - docker-ce
+      - docker-compose-plugin

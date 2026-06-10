@@ -1,7 +1,7 @@
 [General]
 ColorScheme=BreezeDark
 # Accurate RGB code for your sleek Mint Green highlight color
-AccentColor=10,186,181
+AccentColor=46,204,113
 
 [WM]
 # Snaps window titlebar frames to match the global dark scheme perfectly
@@ -13,4 +13,3 @@ inactiveForeground=180,180,180
 [Icons]
 # Locks default, un-breakable dark-adapted visual icons system-wide
 Theme=breeze-dark
-
